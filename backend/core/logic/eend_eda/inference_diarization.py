@@ -3,9 +3,9 @@
 # Licensed under the MIT license.
 
 
-from core.logic.eend.backend.models import average_checkpoints, get_model
-from core.logic.eend.common_utils.diarization_dataset import KaldiDiarizationDataset
-from core.logic.eend.common_utils.gpu_utils import use_single_gpu
+from core.logic.eend_eda.eend.backend.models import average_checkpoints, get_model
+from core.logic.eend_eda.eend.common_utils.diarization_dataset import KaldiDiarizationDataset
+from core.logic.eend_eda.eend.common_utils.gpu_utils import use_single_gpu
 
 from os.path import join
 from scipy.signal import medfilt
@@ -90,7 +90,7 @@ def parse_arguments() -> SimpleNamespace:
     # Parse known arguments to handle unknown ones like 'runserver'
     args, unknown = parser.parse_known_args()
 
-    config_path = "core/logic/infer.yaml"
+    config_path = "core/logic/eend_eda/infer.yaml"
     with open(config_path, 'r') as file:
         config = yaml.safe_load(file)
 
@@ -294,11 +294,13 @@ def generate_segments(wav_scp_file, output_file):
             segments_file.write(f'{utt_id} {recording_id} {start_time:.2f} {end_time:.2f}\n')
 
 
-def generate_rttm(infer_data_dir):
+def generate_rttm(infer_data_dir, model_path, init_epoch, spk_qty):
+
+    args.estimate_spk_qty = spk_qty
 
     model = get_model(args)
     model = average_checkpoints(
-        args.device, model, args.models_path, args.epochs)
+        args.device, model, model_path, init_epoch)
     model.eval()
 
     args.infer_data_dir = infer_data_dir
@@ -332,11 +334,11 @@ def rttm_to_list(file_path):
     return rttm_list
 
 
-def speaker_diarization(user_audio_dir):
+def speaker_diarization_eend(user_audio_dir, model_path, init_epoch, spk_qty):
     file_name = generate_wav_scp(user_audio_dir, f'{user_audio_dir}/wav.scp')
     generate_utt2spk(user_audio_dir, f'{user_audio_dir}/utt2spk')
     generate_segments(f'{user_audio_dir}/wav.scp', f'{user_audio_dir}/segments')
-    generate_rttm(user_audio_dir)
+    generate_rttm(user_audio_dir, model_path, init_epoch, spk_qty)
     return rttm_to_list(f'{user_audio_dir}/{file_name}.rttm')
 
     

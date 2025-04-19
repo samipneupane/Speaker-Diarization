@@ -2,8 +2,8 @@
 # Copyright 2022 Brno University of Technology (author: Federico Landini)
 # Licensed under the MIT license.
 
-import core.logic.eend.common_utils.features as features
-import core.logic.eend.common_utils.kaldi_data as kaldi_data
+import core.logic.eend_eda.eend.common_utils.features as features
+import core.logic.eend_eda.eend.common_utils.kaldi_data as kaldi_data
 import numpy as np
 import torch
 from typing import Tuple
