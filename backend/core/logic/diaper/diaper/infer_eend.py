@@ -17,7 +17,7 @@ from core.logic.diaper.diaper.infer import (
 )
 from os.path import join
 from pathlib import Path
-from safe_gpu import safe_gpu
+# from safe_gpu import safe_gpu
 from scipy.signal import medfilt
 from torch.utils.data import DataLoader
 from core.logic.diaper.diaper.train import _convert
@@ -202,7 +202,7 @@ os.environ['PYTHONHASHSEED'] = str(args.seed)
 logging.info(args)
 
 if args.gpu >= 1:
-    safe_gpu.claim_gpus(nb_gpus=args.gpu)
+    # safe_gpu.claim_gpus(nb_gpus=args.gpu)
     args.device = torch.device("cuda")
 else:
     args.device = torch.device("cpu")
