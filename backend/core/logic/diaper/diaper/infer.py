@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 from core.logic.diaper.diaper.train import _convert
 from types import SimpleNamespace
 from typing import List, TextIO, Tuple
-from safe_gpu import safe_gpu
+# from safe_gpu import safe_gpu
 from scipy.signal import medfilt
 import h5py
 import logging
@@ -351,7 +351,7 @@ if __name__ == '__main__':
     infer_loader = get_infer_dataloader(args)
 
     if args.gpu >= 1:
-        safe_gpu.claim_gpus(nb_gpus=args.gpu)
+        # safe_gpu.claim_gpus(nb_gpus=args.gpu)
         args.device = torch.device("cuda")
     else:
         args.device = torch.device("cpu")
