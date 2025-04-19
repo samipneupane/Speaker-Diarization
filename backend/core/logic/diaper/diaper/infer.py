@@ -4,15 +4,15 @@
 # Copyright 2023 Brno University of Technology (author: Federico Landini)
 # Licensed under the MIT license.
 
-from backend.models import (
+from core.logic.diaper.diaper.backend.models import (
     average_checkpoints,
     get_model,
 )
-from common_utils.diarization_dataset import KaldiDiarizationDataset
+from core.logic.diaper.diaper.common_utils.diarization_dataset import KaldiDiarizationDataset
 from os.path import join
 from pathlib import Path
 from torch.utils.data import DataLoader
-from train import _convert
+from core.logic.diaper.diaper.train import _convert
 from types import SimpleNamespace
 from typing import List, TextIO, Tuple
 from safe_gpu import safe_gpu

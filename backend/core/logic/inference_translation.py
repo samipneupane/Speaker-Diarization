@@ -39,25 +39,17 @@ def recognize_chunks(chunk_files):
 
 
 
-def np_speech_text_translation(user_input_path):
+def np_speech_text_translation(user_input_path, output):
 
     wav_files = glob.glob(f"{user_input_path}/*.flac")
-    rttm_files = glob.glob(f"{user_input_path}/*.rttm")
     audio_path = wav_files[0]
-    rttm_path = rttm_files[0]
 
     audio = AudioSegment.from_file(audio_path, format="flac")
 
     # Read RTTM file and extract segments
     segments = []
-    with open(rttm_path, "r") as file:
-        for line in file:
-            parts = line.strip().split()
-            if len(parts) >= 5:
-                start_time = float(parts[3])
-                duration = float(parts[4])
-                end_time = start_time + duration
-                segments.append((start_time, end_time))
+    for interval in output:
+        segments.append((interval[1], interval[2]))
 
     # Process and save each segment
     for idx, (start, end) in enumerate(segments, start=1):
@@ -71,6 +63,8 @@ def np_speech_text_translation(user_input_path):
     # load audio files
     directory = f"{user_input_path}/separate"
     audio_files = [f for f in os.listdir(directory) if f.endswith(".flac")]
+    audio_files.sort(key=lambda fn: int(os.path.splitext(fn)[0]))
+    # print(audio_files)
 
     text_list = []
     for audio_file in audio_files:
@@ -82,6 +76,6 @@ def np_speech_text_translation(user_input_path):
         for chunk in chunk_files:
             os.remove(chunk)
     
-    os.remove(f"{user_input_path}/separate/{idx}.flac") if os.path.exists(f"{user_input_path}separate/{idx}.flac") else None
+    # os.remove(f"{user_input_path}/separate/{idx}.flac") if os.path.exists(f"{user_input_path}separate/{idx}.flac") else None
 
     return text_list

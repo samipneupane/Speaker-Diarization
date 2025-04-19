@@ -262,7 +262,7 @@ def generate_wav_scp(audio_dir, output_file):
     with open(output_file, 'w') as f:
         for subdir, _, files in os.walk(audio_dir):
             for file in files:
-                if file.endswith('.flac'):
+                if file.endswith('.flac') or file.endswith('.wav'):
                     utt_id = file.split('.')[0]
                     file_path = os.path.join(subdir, file).replace("\\", "/")
                     f.write(f'{utt_id} {file_path}\n')

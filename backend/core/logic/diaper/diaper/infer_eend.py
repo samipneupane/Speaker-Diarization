@@ -2,13 +2,13 @@
 # Copyright 2023 Brno University of Technology (author: Federico Landini)
 # Licensed under the MIT license.
 
-from backend.models import (
+from core.logic.diaper.diaper.backend.models import (
     average_checkpoints,
     get_model,
 )
-from common_utils.diarization_dataset import KaldiDiarizationDataset
-from common_utils.features import stft, transform, splice, subsample
-from infer import (
+from core.logic.diaper.diaper.common_utils.diarization_dataset import KaldiDiarizationDataset
+from core.logic.diaper.diaper.common_utils.features import stft, transform, splice, subsample
+from core.logic.diaper.diaper.infer import (
     estimate_diarization_outputs,
     get_infer_dataloader,
     hard_labels_to_rttm,
@@ -20,7 +20,7 @@ from pathlib import Path
 from safe_gpu import safe_gpu
 from scipy.signal import medfilt
 from torch.utils.data import DataLoader
-from train import _convert
+from core.logic.diaper.diaper.train import _convert
 from types import SimpleNamespace
 from typing import List, TextIO, Tuple
 import h5py
@@ -42,7 +42,7 @@ def parse_arguments() -> SimpleNamespace:
     # Default values for wav-dir, wav-name, and config
     default_wav_dir = "testing" # just random name
     default_wav_name = "mixed_wav" # just random name
-    default_config = "diaper/yaml/infer.yaml"
+    default_config = "core/logic/diaper/infer.yaml"
 
     # Defining arguments with default values
     parser.add_argument('-c', '--config', default=default_config,
@@ -176,64 +176,66 @@ def parse_arguments() -> SimpleNamespace:
     args.n_attractors = 20
 
     args.epochs = "45-50"
-    args.models_path = "diaper/models/trained_models/diaper_2spk_part2/models"
-    args.rttms_dir = "diaper/rttms/RAMC/2spk_model"
-
+    args.models_path = "core/logic/diaper/model/2spk/models"
     args.estimate_spk_qty = 2
-    args.wav_dir = "diarization_dataset/already_merged_dataset/RAMC/_test/audio"
+    
+    args.rttms_dir = "core/logic/user_input/user_0"
+    args.wav_dir = "core/logic/user_input/user_0"
 
     return args
 
 
-if __name__ == '__main__':
-    args = parse_arguments()
+args = parse_arguments()
 
-    # For reproducibility
-    torch.manual_seed(args.seed)
-    torch.cuda.manual_seed(args.seed)
-    torch.cuda.manual_seed_all(args.seed)  # if you are using multi-GPU.
-    np.random.seed(args.seed)  # Numpy module.
-    random.seed(args.seed)  # Python random module.
-    torch.manual_seed(args.seed)
-    torch.backends.cudnn.enabled = False
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
-    os.environ['PYTHONHASHSEED'] = str(args.seed)
+# For reproducibility
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
+torch.cuda.manual_seed_all(args.seed)  # if you are using multi-GPU.
+np.random.seed(args.seed)  # Numpy module.
+random.seed(args.seed)  # Python random module.
+torch.manual_seed(args.seed)
+torch.backends.cudnn.enabled = False
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True
+os.environ['PYTHONHASHSEED'] = str(args.seed)
 
-    logging.info(args)
+logging.info(args)
 
-    if args.gpu >= 1:
-        safe_gpu.claim_gpus(nb_gpus=args.gpu)
-        args.device = torch.device("cuda")
-    else:
-        args.device = torch.device("cpu")
+if args.gpu >= 1:
+    safe_gpu.claim_gpus(nb_gpus=args.gpu)
+    args.device = torch.device("cuda")
+else:
+    args.device = torch.device("cpu")
 
-    assert args.estimate_spk_qty_thr != -1 or \
-        args.estimate_spk_qty != -1, \
-        ("Either 'estimate_spk_qty_thr' or 'estimate_spk_qty' "
-         "arguments have to be defined.")
-    if args.estimate_spk_qty != -1:
-        out_dir = join(args.rttms_dir, f"spkqty{args.estimate_spk_qty}_\
-            thr{args.threshold}_median{args.median_window_length}")
-    elif args.estimate_spk_qty_thr != -1:
-        out_dir = join(args.rttms_dir, f"spkqtythr{args.estimate_spk_qty_thr}_\
-            thr{args.threshold}_median{args.median_window_length}")
+assert args.estimate_spk_qty_thr != -1 or \
+    args.estimate_spk_qty != -1, \
+    ("Either 'estimate_spk_qty_thr' or 'estimate_spk_qty' "
+        "arguments have to be defined.")
+if args.estimate_spk_qty != -1:
+    out_dir = join(args.rttms_dir, f"spkqty{args.estimate_spk_qty}_\
+        thr{args.threshold}_median{args.median_window_length}")
+elif args.estimate_spk_qty_thr != -1:
+    out_dir = join(args.rttms_dir, f"spkqtythr{args.estimate_spk_qty_thr}_\
+        thr{args.threshold}_median{args.median_window_length}")
+
+
+def generate_rttm(model_path, init_epoch, spk_qty):
+
+    args.estimate_spk_qty = spk_qty
 
     model = get_model(args)
 
     model = average_checkpoints(
-        args.device, model, args.models_path, args.epochs)
+        args.device, model, model_path, init_epoch)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = torch.device("cpu")
     model.to(device)
 
-    
     model.eval()
 
     out_dir = join(
-        args.rttms_dir,
-        "rttms"
+        args.rttms_dir
     )
     Path(out_dir).mkdir(parents=True, exist_ok=True)
 
@@ -243,7 +245,7 @@ if __name__ == '__main__':
     for filepath in filepaths:
         # print(filepath)
         args.wav_name = os.path.splitext(os.path.basename(filepath))[0]
-        print(args.wav_name)
+        # print(args.wav_name)
 
         file_frames_length = int((100*librosa.get_duration(path=filepath)) // 1)
         data, samplerate = sf.read(
@@ -323,3 +325,29 @@ if __name__ == '__main__':
             plt.close()
             plt.cla()
             plt.clf()
+
+
+def rttm_to_list(file_path):
+    rttm_list = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.strip():
+                parts = line.split()
+                speaker = parts[7]
+                start_time = float(parts[3])
+                duration = float(parts[4])
+                end_time = start_time + duration
+                rttm_list.append([speaker, start_time, end_time])
+    return rttm_list
+
+def get_first_rttm_file(directory_path):
+    for file_name in os.listdir(directory_path):
+        if file_name.endswith('.rttm'):
+            return file_name  # Return the first .rttm file found
+    return None
+
+
+def speaker_diarization_diaper(user_audio_dir, model_path, init_epoch, spk_qty):
+    generate_rttm(model_path, init_epoch, spk_qty)
+    rttm_file = get_first_rttm_file(user_audio_dir)
+    return rttm_to_list(f'{user_audio_dir}/{rttm_file}')
