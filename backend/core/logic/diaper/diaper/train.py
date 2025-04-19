@@ -544,6 +544,7 @@ if __name__ == '__main__':
         args.device = torch.device("cuda")
         args.log_report_batches_num = int(args.log_report_batches_num / args.gpu)
         torch.multiprocessing.set_sharing_strategy('file_system')
+
     else:
         args.device = torch.device("cpu")
 
