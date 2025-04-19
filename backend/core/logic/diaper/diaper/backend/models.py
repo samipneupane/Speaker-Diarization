@@ -139,8 +139,6 @@ class VanillaSpeakerLayer(torch.nn.Module):
     def forward(self, x: torch.Tensor,
                 spkid_labels: torch.Tensor = None) -> torch.Tensor:
         return torch.matmul(x, self.weights)
-
-
 class ArcfaceSpeakerLayer(torch.nn.Module):
     def __init__(self, in_dim: int, out_dim: int,
                  device: torch.device, s=30., m=0.30):

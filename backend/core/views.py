@@ -151,7 +151,6 @@ class SpeakerDiarizationView(CreateAPIView):
 
             convert_segments_to_rttm(file_path, output)
             image_base64 = diarization_result_base64(file_path, os.path.join(audio_dir, f'{os.path.splitext(file_obj.name)[0]}.rttm'))
-
             return Response({'diarization_result': output, 'image': image_base64}, status=status.HTTP_200_OK)
 
         except Exception as e:
