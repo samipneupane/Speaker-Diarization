@@ -4,11 +4,11 @@
 
 from os.path import isfile, join
 
-from core.logic.eend.backend.losses import (
+from core.logic.eend_eda.eend.backend.losses import (
     pit_loss_multispk,
     vad_loss,
 )
-from core.logic.eend.backend.updater import (
+from core.logic.eend_eda.eend.backend.updater import (
     NoamOpt,
     setup_optimizer,
 )

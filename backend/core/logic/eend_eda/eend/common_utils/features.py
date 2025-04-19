@@ -2,7 +2,7 @@
 # Copyright 2022 Brno University of Technology (author: Federico Landini)
 # Licensed under the MIT license.
 
-from core.logic.eend.common_utils.kaldi_data import KaldiData
+from core.logic.eend_eda.eend.common_utils.kaldi_data import KaldiData
 from typing import Callable, Tuple
 import numpy as np
 import librosa

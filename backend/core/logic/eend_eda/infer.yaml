@@ -13,7 +13,7 @@ infer_data_dir: null # from backend
 input_transform: logmel_meannorm
 median_window_length: 11
 model_type: TransformerEDA
-models_path: core/logic/model/4spkos4_last #####
+models_path: core/logic/model/ #####
 num_frames: -1
 rttms_dir: null # same as infer_data_dir
 sampling_rate: 16000
