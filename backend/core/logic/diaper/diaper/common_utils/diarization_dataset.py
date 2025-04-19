@@ -6,8 +6,8 @@
 
 from typing import Tuple
 from random import shuffle
-import common_utils.features as features
-import common_utils.kaldi_data as kaldi_data
+import core.logic.diaper.diaper.common_utils.features as features
+import core.logic.diaper.diaper.common_utils.kaldi_data as kaldi_data
 import logging
 import itertools
 import numpy as np

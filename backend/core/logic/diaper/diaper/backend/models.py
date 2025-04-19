@@ -6,13 +6,13 @@
 
 from os.path import isfile, join
 
-from backend.losses import (
+from core.logic.diaper.diaper.backend.losses import (
     pad_labels,
     pad_sequence,
     pit_loss_multispk,
     vad_loss,
 )
-from backend.updater import (
+from core.logic.diaper.diaper.backend.updater import (
     NoamOpt,
     setup_optimizer,
 )
