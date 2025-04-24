@@ -1,0 +1,10 @@
+LibriSpeech
+VoxCeleb
+Indian Github + Nepali Female
+
+60-20-20 train-valid-test
+
+prepare 8000 merged audio for 2 speakers
+prepare 10000 merged audio for 3 speakers
+prepare 10000 merged audio for 4 speakers
+prepare 8000 merged audio for m speakers (m=2,3,4)
