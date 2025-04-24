@@ -12,12 +12,12 @@ In our work, we used the model architecture and modify the necessary configurati
 
 ## Dataset Sources
 
-| Dataset                                                                              | Language | #Speakers |
-| ------------------------------------------------------------------------------------ | -------- | --------- |
-| [LibriSpeech](https://www.openslr.org/12/)                                           | English  | 921       |
-| [VoxCeleb](http://www.robots.ox.ac.uk/~vgg/data/voxceleb/)                           | English  | 1,211     |
-| [Nepali Female Speakers](https://www.openslr.org/43/)                                | Nepali   | 18        |
-| [Hindi Audio (Shukla 2020)](https://github.com/ShivamShukla123/Hindi-Speech-Dataset/)| Hindi    | 100       |
+| Dataset                                                                                          | Language | #Speakers |
+| ------------------------------------------------------------------------------------             | -------- | --------- |
+| [LibriSpeech](https://www.openslr.org/12/)                                                       | English  | 921       |
+| [VoxCeleb](https://huggingface.co/datasets/ProgramComputer/voxceleb)                             | English  | 1,211     |
+| [Nepali Female Speakers](https://www.openslr.org/43/)                                            | Nepali   | 18        |
+| [Hindi Audio](https://github.com/shivam-shukla/Speech-Dataset-in-Hindi-Language/)  | Hindi    | 100       |
 
 The multilingual mix ensures robust generalization across acoustic conditions.
 
@@ -50,28 +50,74 @@ The multilingual mix ensures robust generalization across acoustic conditions.
 
 *DER: Diarization Error Rate (miss, false alarm, confusion)
 
-## Web Application Overview
+# Web Application Setup
 
-- **Backend (Django)**:
-  - REST API endpoints: `/api/upload/`, `/api/diarize/`, `/api/transcribe/`
-  - Model loading from `backend/models/`, GPU inference support
-  - Asynchronous task queue (Celery) for long audio
-- **Frontend (React)**:
-  - File upload widget, progress bar, interactive speaker timeline
-  - Time‑aligned transcripts displayed in Nepali/English
-  - Embedded demo video (`media/recording.mp4`) playable inline
+## 📋 Prerequisites
+- Python 3.8+ installed
+- Node.js 14+ and npm installed
+- Git (optional, for cloning repositories)
+
+## 🧠 Backend Setup (Django)
+
+Navigate to backend directory:
+```bash
+cd backend
+```
+
+Create a virtual environment:
+```bash
+python -m venv venv
+```
+
+Activate the virtual environment:
+```bash
+source venv/bin/activate    # Linux/macOS
+```
+```bash
+venv\Scripts\activate   # Windows
+```
+
+Install required Python packages:
+```bash
+pip install -r requirements.txt
+```
+
+Run the Django development server:
+```bash
+python manage.py runserver
+```
+
+> ⚠️ **Important**: Ensure your trained diarization models are placed in the respective directory.
+
+## Frontend Setup (React)
+
+Navigate to frontend directory:
+```bash
+cd frontend
+```
+
+Install required npm packages:
+```bash
+npm install
+```
+
+Start the React development server:
+```bash
+npm start
+```
 
 
 ## 🎬 Demo Video
 
 Watch our demonstration video below to see the speaker diarization application in action:
+[▶️ Demo Video](media/demo_video.mp4)
 
-<video width="640" height="360" controls>
-  <source src="media/demo_video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<p align="center">
+  <img src="media/demo_preview.gif" width="100%" />
+</p>
 
 
 ## Project Report
 Access project report here:
 [Project Report](media/Major_Project_Final.pdf)
+
